@@ -1,10 +1,11 @@
 from typing import Any, Dict, Generic, List, Optional, Type, TypeVar, Union
 
 from fastapi.encoders import jsonable_encoder
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 from sqlalchemy.orm import Session
 
 from app.db.base_class import Base
+from app.models import User
 
 ModelType = TypeVar("ModelType", bound=Base)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
@@ -28,6 +29,9 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
 
     def get_multi(self, db: Session, *, skip: int = 0, limit: int = 100) -> List[ModelType]:
         return db.query(self.model).offset(skip).limit(limit).all()
+
+    def get_user_by_email(self, db: Session, email: EmailStr) -> Optional[User]:
+        return db.query(self.model).filter(self.model.email == email).first()
 
     def create(self, db: Session, *, obj_in: CreateSchemaType) -> ModelType:
         db_obj = self.model(**obj_in.model_dump())  # type: ignore
