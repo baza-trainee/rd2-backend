@@ -34,6 +34,11 @@ def create_user(obj_in: schemas.CreateUser, db: Session = Depends(get_db)):
 
 @router.get("users", response_model=None, status_code=status.HTTP_200_OK)
 def get_user_list(db: Session = Depends(get_db)):
+    """
+    Only test get response
+    :param db:
+    :return:
+    """
     users = crud_user.get_multi(db)
 
     return users
