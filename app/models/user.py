@@ -10,7 +10,7 @@ class User(TimestampedModel, Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
-    phone = Column(String, unique=True, nullable=True)
+    phone = Column(String, nullable=True)
     email = Column(String, unique=True, index=True, nullable=False)
     description = Column(Text)
 
