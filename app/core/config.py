@@ -19,6 +19,11 @@ class Settings(BaseSettings):
     # "http://localhost:8080", "http://local.dockertoolbox.tiangolo.com"]'
     BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = ["http://127.0.0.1:3000"]
 
+    SMTP_SERVER: str = os.getenv("SMTP_SERVER")
+    SMTP_PORT: int = int(os.getenv("SMTP_PORT"))
+    SMTP_USER_NAME: str = os.getenv("SMTP_USER_NAME")
+    SMTP_PASSWORD: str = os.getenv("SMTP_PASSWORD")
+
     @field_validator("BACKEND_CORS_ORIGINS", mode="before")
     @classmethod
     def assemble_cors_origins(cls, v: Union[str, List[str]]) -> Union[List[str], str]:
