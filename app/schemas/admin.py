@@ -20,13 +20,27 @@ class AdminCreate(BaseModel):
     role: UserTypeEnum
 
     class Config:
-        orm_mode = True
-
+        from_attributes = True
 
 
 class AdminLogin(BaseModel):
     email: EmailStr
     password: str
+
+
+class ForgotPassword(BaseModel):
+    email: EmailStr
+
+
+class ResetPassword(BaseModel):
+    new_password: str
+    confirm_password: str
+
+
+class ChangePassword(BaseModel):
+    password: str
+    new_password: str
+    confirm_password: str
 
 
 class AdminUpdate(BaseModel):
