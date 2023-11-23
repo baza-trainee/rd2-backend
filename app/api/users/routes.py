@@ -1,44 +1,67 @@
+import smtplib
+from typing import List
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from starlette import status
 
-from app import schemas
-from app.api.deps import get_db
-from app.crud.user import crud_user
-from app.email_setting import send_welcom_letter
+from fastapi.responses import FileResponse
+
+from app.schemas import BaseUser, CreateUser, MessageSchema, ListUser
+from app.api.deps import get_db, get_current_user
+from app.crud.user import crud_user, crud_message
+from app.email_setting import EmailService
 from fastapi import HTTPException
-import smtplib
+
+
+from app.exel_generate import generate_exel_report
+from app.models import Admin
 
 router = APIRouter()
 
 
-@router.post("create-user", response_model=schemas.BaseUser, status_code=status.HTTP_201_CREATED)
-def create_user(obj_in: schemas.CreateUser, db: Session = Depends(get_db)):
+@router.get("/download-report", response_class=FileResponse, )
+def get_report(db: Session = Depends(get_db), current_user: Admin = Depends(get_current_user)):
+    report_path = generate_exel_report(db)
+    return FileResponse(report_path, filename="report.xlsx")
 
-    existing_user = crud_user.get_user_by_email(db, email=obj_in.email)
 
-    if existing_user:
-        raise HTTPException(status_code=400, detail="User with this email already exists, please send message 'email'")
+@router.post("/create-user", response_model=BaseUser, status_code=status.HTTP_201_CREATED)
+def create_user(obj_in: CreateUser, message: MessageSchema, db: Session = Depends(get_db)):
 
-    users = crud_user.create(db, obj_in=obj_in)
+    user = crud_user.get_user_by_email(db, email=obj_in.email)
+    message = crud_message.create(db, obj_in=message)
 
-    user_email = users.email
+    if user:
+        crud_user.add_message(db, user, message)
+
+    else:
+        user = crud_user.create(db, obj_in=obj_in)
+        crud_user.add_message(db, user, message)
+
+    user_email = user.email
     donat_url = f"#"
-    send_welcom_letter(user_email, donat_url)
+    subject = "State Enterprise R&D Center for Overuse Issues of Georesources"
+    body = f"Hello, thank you for your question. We will contact you shortly\n" \
+           f"If we support Socrat project, follow the link for support {donat_url}\n" \
+
+    send_message = EmailService(user_email, subject, body).send_message()
     try:
-        send_welcom_letter(user_email, donat_url)
+        send_message
     except smtplib.SMTPException as e:
         raise HTTPException(status_code=500, detail=f"Failed to send welcome email: {str(e)}")
-    return users
+    return user
 
 
-@router.get("users", response_model=None, status_code=status.HTTP_200_OK)
-def get_user_list(db: Session = Depends(get_db)):
-    """
-    Only test get response
-    :param db:
-    :return:
-    """
+@router.get("/", response_model=List[ListUser], status_code=status.HTTP_200_OK)
+def get_user_list(db: Session = Depends(get_db), current_user: Admin = Depends(get_current_user)):
     users = crud_user.get_multi(db)
-
     return users
+
+
+@router.get("/{user_id}", response_model=BaseUser, status_code=status.HTTP_200_OK)
+def get_user(user_id: int, db: Session = Depends(get_db), current_user: Admin = Depends(get_current_user)):
+    user = crud_user.get(db, id=user_id)
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    return user

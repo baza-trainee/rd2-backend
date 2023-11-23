@@ -11,3 +11,8 @@ class Token(BaseModel):
 class RefreshToken(Token):
     access_token: Optional[str] = None
     refresh_token: Optional[str] = None
+
+
+class TokenPayload(BaseModel):
+    sub: str = None
+    exp: int = None

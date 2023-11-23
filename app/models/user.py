@@ -1,4 +1,5 @@
-from sqlalchemy import Column, Integer, String, Text, Enum
+from sqlalchemy import Column, Integer, String, Text, Enum, Table, ForeignKey
+from sqlalchemy.orm import relationship
 
 from app.db.base_class import Base
 from .admin import UserTypeEnum
@@ -10,11 +11,22 @@ class User(TimestampedModel, Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
+    surname = Column(String, nullable=False)
     phone = Column(String, nullable=False)
     email = Column(String, unique=True, index=True, nullable=False)
     role = Column(Enum(UserTypeEnum), nullable=False, default=UserTypeEnum.client)
-    description = Column(Text)
 
+    messages = relationship("Message", back_populates="users")
+
+
+class Message(TimestampedModel, Base):
+    __tablename__ = "messages"
+
+    id = Column(Integer, primary_key=True, index=True)
+    msg = Column(Text)
+
+    user_id = Column(Integer, ForeignKey("users.id"))
+    users = relationship("User", back_populates="messages")
 
 
 
