@@ -1,8 +1,8 @@
-
-from sqlalchemy import Column, Integer, String, LargeBinary, Text
+from sqlalchemy import Column, Integer, LargeBinary, String, Text
 from sqlalchemy.dialects.postgresql import BYTEA
 
 from app.db.base_class import Base
+
 from .base import TimestampedModel
 
 

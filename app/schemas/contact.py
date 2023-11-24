@@ -1,6 +1,7 @@
-from pydantic import BaseModel, EmailStr
-from typing import Optional
 from os import getenv
+from typing import Optional
+
+from pydantic import BaseModel, EmailStr
 
 
 class ContactBase(BaseModel):

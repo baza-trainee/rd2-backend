@@ -2,9 +2,10 @@ from typing import Optional
 
 from sqlalchemy.orm import Session
 
-from .base import CRUDBase
-from app.models.contact import Contact
 from app import schemas
+from app.models.contact import Contact
+
+from .base import CRUDBase
 
 
 class ContactCRUD(CRUDBase[Contact, schemas.ContactBase, schemas.ContactUpdate]):

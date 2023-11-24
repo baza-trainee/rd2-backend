@@ -1,8 +1,8 @@
 import enum
-
-from sqlalchemy import Column, Integer, String, Boolean, Enum
+from sqlalchemy import Boolean, Column, Enum, Integer, String
 
 from app.db.base_class import Base
+
 from .base import TimestampedModel
 
 
