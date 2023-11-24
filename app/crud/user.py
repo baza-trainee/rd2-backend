@@ -3,8 +3,9 @@ from typing import Optional
 from sqlalchemy.orm import Session
 
 from app import schemas
+from app.models.user import Message, User
+
 from .base import CRUDBase
-from app.models.user import User, Message
 
 
 class UserCRUD(CRUDBase[User, schemas.BaseUser, schemas.BaseUser]):

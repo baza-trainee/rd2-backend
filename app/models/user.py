@@ -1,7 +1,8 @@
-from sqlalchemy import Column, Integer, String, Text, Enum, Table, ForeignKey
+from sqlalchemy import Column, Enum, ForeignKey, Integer, String, Table, Text
 from sqlalchemy.orm import relationship
 
 from app.db.base_class import Base
+
 from .admin import UserTypeEnum
 from .base import TimestampedModel
 
@@ -27,7 +28,3 @@ class Message(TimestampedModel, Base):
 
     user_id = Column(Integer, ForeignKey("users.id"))
     users = relationship("User", back_populates="messages")
-
-
-
-

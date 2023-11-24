@@ -3,10 +3,11 @@ from typing import Optional
 from pydantic import EmailStr
 from sqlalchemy.orm import Session
 
-from app.utils import verify_password
-from .base import CRUDBase
-from app.models.admin import Admin
 from app import schemas
+from app.models.admin import Admin
+from app.utils import verify_password
+
+from .base import CRUDBase
 
 
 class AdminCRUD(CRUDBase[Admin, schemas.AdminCreate, schemas.AdminUpdate]):
@@ -23,4 +24,3 @@ class AdminCRUD(CRUDBase[Admin, schemas.AdminCreate, schemas.AdminUpdate]):
 
 
 crud_user = AdminCRUD(Admin)
-

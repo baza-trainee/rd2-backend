@@ -1,7 +1,8 @@
+import os
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-import os
+
 from app.core.config import settings
 
 
@@ -32,4 +33,3 @@ class EmailService:
         except Exception as e:
             # Handling errors when sending
             print(f"Error send message: {str(e)}")
-

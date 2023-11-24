@@ -1,18 +1,15 @@
-import json
 from datetime import datetime
 from typing import Generator
 
-import jwt
 from fastapi import Depends, HTTPException
-from pydantic import ValidationError
 from sqlalchemy.orm import Session
 from starlette import status
 
+from app.crud.admin import crud_user
 from app.db.session import SessionLocal
 from app.models import Admin
 from app.models.admin import UserTypeEnum
 from app.utils import apikey_scheme, token_decode
-from app.crud.admin import crud_user
 
 
 def get_db() -> Generator:
@@ -23,9 +20,10 @@ def get_db() -> Generator:
         db.close()
 
 
-def get_current_user(token: str = Depends(apikey_scheme), db: Session = Depends(get_db)):
+def get_current_user(
+    token: str = Depends(apikey_scheme), db: Session = Depends(get_db)
+):
     try:
-
         token_data = token_decode(token)
         if token_data.exp and datetime.fromtimestamp(token_data.exp) < datetime.now():
             raise HTTPException(
@@ -34,7 +32,7 @@ def get_current_user(token: str = Depends(apikey_scheme), db: Session = Depends(
                 headers={"WWW-Authenticate": "Bearer"},
             )
 
-    except(Exception):
+    except Exception:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Could not validate credentials",
@@ -57,8 +55,8 @@ def check_active_user(user: Admin = Depends(get_current_user)):
         return user
 
     raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Not active account",
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Not active account",
     )
 
 
