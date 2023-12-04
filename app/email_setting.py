@@ -24,10 +24,23 @@ class EmailService:
 
         # Connect to the SMTP server and send a letter
         try:
-            server = smtplib.SMTP(settings.SMTP_SERVER, settings.SMTP_PORT)
-            server.starttls()
+            print("Connecting to the SMTP server...")
+            server = smtplib.SMTP_SSL(settings.SMTP_SERVER, settings.SMTP_PORT)
+            print("Connected successfully.")
+
+            print("Starting TLS...")
+            # server.starttls()
+            print("TLS started successfully.")
+
+            print("1")
+            print(settings.SMTP_USER_NAME)
+            print(settings.SMTP_PASSWORD)
             server.login(settings.SMTP_USER_NAME, settings.SMTP_PASSWORD)
+            print("2")
+
+            print("Sending email...")
             server.sendmail(settings.SMTP_USER_NAME, self.user_email, msg.as_string())
+            print("Email sent successfully.")
             server.quit()
 
         except Exception as e:
