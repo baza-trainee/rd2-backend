@@ -19,10 +19,22 @@ class Settings(BaseSettings):
     # "http://localhost:8080", "http://local.dockertoolbox.tiangolo.com"]'
     BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = ["http://127.0.0.1:3000"]
 
+
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES")
+    REFRESH_TOKEN_EXPIRE_MINUTES: int = os.getenv("REFRESH_TOKEN_EXPIRE_MINUTES")
+    RESET_TOKEN_EXPIRE_MINUTES: int = os.getenv("RESET_TOKEN_EXPIRE_MINUTES")
+    AUTHENTICATION__ALGORITHM: str = os.getenv("AUTHENTICATION__ALGORITHM")
+    JWT_SECRET_KEY: str = os.getenv("JWT_SECRET_KEY")
+    JWT_REFRESH_SECRET_KEY: str = os.getenv("JWT_REFRESH_SECRET_KEY")
+
+
     SMTP_SERVER: str = os.getenv("SMTP_SERVER")
     SMTP_PORT: int = int(os.getenv("SMTP_PORT"))
     SMTP_USER_NAME: str = os.getenv("SMTP_USER_NAME")
     SMTP_PASSWORD: str = os.getenv("SMTP_PASSWORD")
+
+    BASE_URL: str = os.getenv("BASE_URL")
+
 
     @field_validator("BACKEND_CORS_ORIGINS", mode="before")
     @classmethod
@@ -43,14 +55,7 @@ class Settings(BaseSettings):
     #         return None
     #     return v
     #
-    # POSTGRES_HOST: str = os.getenv("POSTGRES_HOST")
-    # POSTGRES_PORT: str = os.getenv("POSTGRES_PORT")
-    # POSTGRES_SERVER: str = f"{POSTGRES_HOST}:{POSTGRES_PORT}"
-    # POSTGRES_USER: str = os.getenv("POSTGRES_USER")
-    # POSTGRES_PASSWORD: str = os.getenv("POSTGRES_PASSWORD")
-    # POSTGRES_DB: str = os.getenv("POSTGRES_DB")
-    # SQLALCHEMY_DATABASE_URI: Optional[str] = os.getenv("DATABASE_URL")
-    #
+
     # @field_validator("SQLALCHEMY_DATABASE_URI", mode="before")
     # @classmethod
     # def assemble_db_connection(cls, v: Optional[str], info: FieldValidationInfo) -> Any:
