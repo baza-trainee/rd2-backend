@@ -24,8 +24,9 @@ class EmailService:
 
         # Connect to the SMTP server and send a letter
         try:
-            server = smtplib.SMTP(settings.SMTP_SERVER, settings.SMTP_PORT)
-            server.starttls()
+
+            server = smtplib.SMTP_SSL(settings.SMTP_SERVER, settings.SMTP_PORT)
+            # server.starttls()
             server.login(settings.SMTP_USER_NAME, settings.SMTP_PASSWORD)
             server.sendmail(settings.SMTP_USER_NAME, self.user_email, msg.as_string())
             server.quit()
