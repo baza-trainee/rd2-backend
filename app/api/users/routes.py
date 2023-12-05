@@ -6,12 +6,14 @@ from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 from starlette import status
 
+
 from app.api.deps import get_current_user, get_db
 from app.crud.user import crud_message, crud_user
 from app.email_setting import EmailService
 from app.exel_generate import generate_exel_report
 from app.models import Admin
 from app.schemas import BaseUser, CreateUser, ListUser, MessageSchema
+
 
 router = APIRouter()
 
@@ -65,7 +67,7 @@ def get_user_list(
     db: Session = Depends(get_db), current_user: Admin = Depends(get_current_user)
 ):
     users = crud_user.get_multi(db)
-    return users
+
 
 
 @router.get("/{user_id}", response_model=BaseUser, status_code=status.HTTP_200_OK)
