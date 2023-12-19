@@ -1,7 +1,10 @@
 from typing import Any
 
 
+
 from fastapi import APIRouter, Body, Depends, HTTPException, Request
+
+
 from sqlalchemy.orm import Session
 from starlette import status
 
@@ -25,7 +28,9 @@ router = APIRouter()
 
 
 @router.post("/login", response_model=schemas.Token)
+
 def login(request: Request,
+
     db: Session = Depends(get_db), user_data: schemas.AdminLogin = Body(...)
 ) -> Any:
     """
@@ -36,8 +41,10 @@ def login(request: Request,
     :return: jwt access and refresh token
     """
 
+
     # domain = request.headers
     # print(f"-------------------------------------Request from client IP: {domain}")
+
     user = crud_user.authenticate(
         db, email=user_data.email, password=user_data.password
     )
@@ -50,6 +57,7 @@ def login(request: Request,
         "access_token": create_access_token(user.id),
         "refresh_token": create_refresh_token(user.id),
     }
+
 
 
 @router.post("/refresh", response_model=schemas.RefreshToken)
@@ -76,6 +84,7 @@ def refresh_token(token: str, db: Session = Depends(get_db),):
 
     new_refresh_token = create_refresh_token(user.id)
     return {"refresh_token": new_refresh_token}
+
 
 
 @router.post(

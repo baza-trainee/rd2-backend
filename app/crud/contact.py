@@ -17,4 +17,5 @@ class ContactCRUD(CRUDBase[Contact, schemas.ContactBase, schemas.UpdateContact])
     #     return db.query(Contact).first().email
 
 
+
 crud_contact = ContactCRUD(Contact)

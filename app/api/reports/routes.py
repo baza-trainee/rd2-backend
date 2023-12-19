@@ -1,8 +1,11 @@
 import os
 
+
+
 from fastapi import APIRouter, Depends, HTTPException, UploadFile
 from sqlalchemy.orm import Session
 from starlette import status
+
 from starlette.responses import JSONResponse, FileResponse
 
 from app.api.deps import get_current_user, get_db
@@ -11,17 +14,21 @@ from app.models import Admin
 from app.schemas import BaseFile, ReportResponse
 from app.file_validate import file_valid
 
+
 router = APIRouter()
 
 
 @router.post(
+
     "/reports", response_model=ReportResponse, status_code=status.HTTP_201_CREATED
+
 )
 def upload_report(
     file: UploadFile,
     db: Session = Depends(get_db),
     current_user: Admin = Depends(get_current_user),
 ):
+
     valid_file = file_valid(file)
     if valid_file is False:
         raise HTTPException(status_code=400, detail="File must be in PDF format")
@@ -29,10 +36,12 @@ def upload_report(
     elif valid_file is None:
         raise HTTPException(status_code=400, detail="The file size should not exceed 200 MB")
 
+
     upload_folder = "report"
     os.makedirs(upload_folder, exist_ok=True)
 
     file_path = os.path.join(upload_folder, file.filename)
+
     print(file_path)
     if crud_report.check_report(db):
         report = crud_report.check_report(db)
@@ -42,8 +51,10 @@ def upload_report(
             os.remove(file_path)
         crud_report.remove(db, id=report_id)
 
+
     with open(file_path, "wb") as f:
         f.write(file.file.read())
+
 
     report_schema = BaseFile(filename=file.filename, path=file_path)
     report = crud_report.create(db=db, obj_in=report_schema)
@@ -51,11 +62,13 @@ def upload_report(
     return JSONResponse(
         content={
             "message": f"{file.filename} successfully added. "
+
             f"Report ID: {report.id} "
             f"Report date: {report.created_at}"
         },
         media_type="application/json",
     )
+
 
 
 @router.post(
@@ -176,13 +189,16 @@ def get_rule(db: Session = Depends(get_db)):
     return FileResponse(rules.path)
 
 
+
 @router.delete("/remove", status_code=status.HTTP_204_NO_CONTENT)
 def remove_report(
     db: Session = Depends(get_db), current_user: Admin = Depends(get_current_user)
 ):
+
     """
     Remove report
     """
+
     report = crud_report.check_report(db)
     if report is None:
         raise HTTPException(status_code=404, detail="Report not found")
@@ -198,6 +214,7 @@ def remove_report(
 
     crud_report.remove(db, id=report_id)
     return report
+
 
 
 @router.delete("/remove/private-policy", status_code=status.HTTP_204_NO_CONTENT)

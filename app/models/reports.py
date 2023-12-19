@@ -14,6 +14,7 @@ class Report(TimestampedModel, Base):
     path = Column(String, unique=True, nullable=False)
 
 
+
 class PrivatePolicy(TimestampedModel, Base):
     __tablename__ = "privatepolicy"
 
@@ -28,3 +29,4 @@ class Rules(TimestampedModel, Base):
     id = Column(Integer, primary_key=True, index=True)
     filename = Column(String, unique=True, nullable=False)
     path = Column(String, unique=True, nullable=False)
+

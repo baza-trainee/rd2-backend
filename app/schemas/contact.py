@@ -5,6 +5,7 @@ from pydantic import BaseModel, EmailStr
 
 
 class ContactBase(BaseModel):
+
     phone: Optional[str] | None
     email: Optional[EmailStr] | None
 
@@ -44,3 +45,4 @@ class ContactEmail(BaseModel):
 # class ContactEmailCreate(BaseModel):
 #     email: EmailStr
 #
+

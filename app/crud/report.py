@@ -3,7 +3,9 @@ from typing import Optional
 from sqlalchemy.orm import Session
 
 from app import schemas
+
 from app.models.reports import Report, PrivatePolicy, Rules
+
 
 from .base import CRUDBase
 
@@ -14,6 +16,7 @@ class ReportCRUD(CRUDBase[Report, schemas.BaseFile, schemas.ReportResponse]):
 
 
 crud_report = ReportCRUD(Report)
+
 
 
 class PrivatePolicyCRUD(CRUDBase[PrivatePolicy, schemas.BaseFile, schemas.ReportResponse]):
@@ -30,3 +33,4 @@ class RuleCRUD(CRUDBase[Rules, schemas.BaseFile, schemas.ReportResponse]):
 
 
 crud_rules = RuleCRUD(Rules)
+

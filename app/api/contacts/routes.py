@@ -5,7 +5,9 @@ from starlette import status
 from app.api.deps import get_current_user, get_db
 from app.crud.contact import crud_contact
 from app.models import Admin
+
 from app.schemas import ContactBase, ContactPhone, ContactEmail, PhoneCreate, EmailCreate, UpdateContact
+
 
 router = APIRouter()
 
@@ -90,13 +92,16 @@ def get_phones(db: Session = Depends(get_db)):
 
 @router.get("/contacts/emails", response_model=ContactEmail, status_code=status.HTTP_200_OK)
 def get_emails(db: Session = Depends(get_db)):
+
     contact = crud_contact.check_contact(db)
     if contact is None:
         raise HTTPException(status_code=404, detail="Contact not found")
     contact_id = contact.id
     contact = crud_contact.get(db, id=contact_id)
+
     email = contact.email
     return {"email": email}
+
 
 
 @router.delete("/contact", status_code=status.HTTP_204_NO_CONTENT)
