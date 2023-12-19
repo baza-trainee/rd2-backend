@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     # BACKEND_CORS_ORIGINS is a JSON-formatted list of origins
     # e.g: '["http://localhost", "http://localhost:4200", "http://localhost:3000", \
     # "http://localhost:8080", "http://local.dockertoolbox.tiangolo.com"]'
-    BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = ["http://127.0.0.1:3000"]
+    BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = ['http://127.0.0.1:3000', 'http://localhost:3000', 'http://localhost', 'http://0.0.0.0:3000']
 
     ACCESS_TOKEN_EXPIRE_MINUTES: int = os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES")
     REFRESH_TOKEN_EXPIRE_MINUTES: int = os.getenv("REFRESH_TOKEN_EXPIRE_MINUTES")
@@ -43,14 +43,14 @@ class Settings(BaseSettings):
 
     PROJECT_NAME: str = "socrat"
     # SENTRY_DSN: Optional[HttpUrl] = ""
-    #
+
     # @field_validator("SENTRY_DSN", mode="before")
     # @classmethod
     # def sentry_dsn_can_be_blank(cls, v: str) -> Optional[str]:
     #     if len(v) == 0:
     #         return None
     #     return v
-    #
+
 
     # @field_validator("SQLALCHEMY_DATABASE_URI", mode="before")
     # @classmethod

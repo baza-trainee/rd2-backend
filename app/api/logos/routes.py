@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, Form, HTTPException, UploadFile
 from fastapi.params import File
 from sqlalchemy.orm import Session
 from starlette import status
-from starlette.responses import JSONResponse
+from starlette.responses import JSONResponse, FileResponse
 
 from app.api.deps import get_current_user, get_db
 from app.crud.logos import crud_logo
@@ -34,7 +34,7 @@ def upload_report(
     os.makedirs(upload_folder, exist_ok=True)
 
     file_path = os.path.join(upload_folder, file.filename)
-
+    print(file_path)
     if os.path.exists(file_path):
         raise HTTPException(
             status_code=400, detail="File with this name already exists"
@@ -59,11 +59,14 @@ def upload_report(
 
 
 @router.get("/logos", response_model=List[LogoList], status_code=status.HTTP_200_OK)
-def list_logos(
-    db: Session = Depends(get_db), current_user: Admin = Depends(get_current_user)
-):
+def list_logos(db: Session = Depends(get_db)):
     logos = crud_logo.get_multi(db)
     return logos
+
+
+@router.get("/logos/{logo_path:path}", response_class=FileResponse)
+def get_logo(logo_path: str):
+    return FileResponse(logo_path)
 
 
 @router.delete("/remove", status_code=status.HTTP_204_NO_CONTENT)

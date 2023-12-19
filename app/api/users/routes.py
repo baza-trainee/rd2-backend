@@ -1,10 +1,12 @@
 import smtplib
+import time
 from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 from starlette import status
+from starlette.background import BackgroundTasks
 
 from app.api.deps import get_current_user, get_db
 from app.crud.user import crud_message, crud_user
@@ -31,7 +33,10 @@ def get_report(
     "/create-user", response_model=BaseUser, status_code=status.HTTP_201_CREATED
 )
 def create_user(
-    obj_in: CreateUser, message: MessageSchema, db: Session = Depends(get_db)
+    background_tasks: BackgroundTasks,
+    obj_in: CreateUser,
+    message: MessageSchema,
+    db: Session = Depends(get_db)
 ):
     user = crud_user.get_user_by_email(db, email=obj_in.email)
     message = crud_message.create(db, obj_in=message)
@@ -50,7 +55,11 @@ def create_user(
         f"Hello, thank you for your question. We will contact you shortly\n"
         f"If we support Socrat project, follow the link for support {donat_url}\n"
     )
-    send_message = EmailService(user_email, subject, body).send_message()
+
+    send_message = EmailService(user_email, subject, body)
+    background_tasks.add_task(send_message.send_message)
+
+    #
     try:
         send_message
     except smtplib.SMTPException as e:

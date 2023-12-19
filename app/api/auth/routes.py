@@ -1,6 +1,7 @@
 from typing import Any
 
-from fastapi import APIRouter, Body, Depends, HTTPException
+
+from fastapi import APIRouter, Body, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 from starlette import status
 
@@ -24,7 +25,7 @@ router = APIRouter()
 
 
 @router.post("/login", response_model=schemas.Token)
-def login(
+def login(request: Request,
     db: Session = Depends(get_db), user_data: schemas.AdminLogin = Body(...)
 ) -> Any:
     """
@@ -34,6 +35,9 @@ def login(
     :param user_data: Body object with email and password
     :return: jwt access and refresh token
     """
+
+    # domain = request.headers
+    # print(f"-------------------------------------Request from client IP: {domain}")
     user = crud_user.authenticate(
         db, email=user_data.email, password=user_data.password
     )
@@ -46,6 +50,32 @@ def login(
         "access_token": create_access_token(user.id),
         "refresh_token": create_refresh_token(user.id),
     }
+
+
+@router.post("/refresh", response_model=schemas.RefreshToken)
+def refresh_token(token: str, db: Session = Depends(get_db),):
+    """
+
+    :param token: refresh token
+    :param db: DB session
+    :return: if time expired return access_token, else return refresh_token
+    """
+    decoded_token = token_decode(token).sub
+    if decoded_token is False:
+        raise HTTPException(status_code=400, detail="Invalid token")
+
+    user_id = decoded_token
+
+    user = crud_user.get(db, id=user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    if decoded_token is None:
+        new_access_token = create_access_token(user.id)
+        return {"access_token": new_access_token}
+
+    new_refresh_token = create_refresh_token(user.id)
+    return {"refresh_token": new_refresh_token}
 
 
 @router.post(
