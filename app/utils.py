@@ -52,7 +52,9 @@ def create_refresh_token(subject: Union[str, Any], expires_delta: int = None) ->
 
     to_encode = {"exp": expires_delta, "sub": str(subject)}
     encoded_jwt = jwt.encode(
-        to_encode, settings.JWT_REFRESH_SECRET_KEY, settings.AUTHENTICATION__ALGORITHM
+
+        to_encode, settings.JWT_SECRET_KEY, settings.AUTHENTICATION__ALGORITHM
+
     )
     return encoded_jwt
 
@@ -82,6 +84,8 @@ def token_decode(token: str):
         token_data = TokenPayload(**payload)
         return token_data
     except jwt.ExpiredSignatureError:
-        return {"error": "Token has expired"}
+
+        return None
     except Exception:
-        return {"error": "Invalid token"}
+        return False
+
