@@ -1,6 +1,6 @@
-import os
+"""Models for contact information."""
 
-from sqlalchemy import Column, Enum, Integer, String, Text
+from sqlalchemy import Column, Integer, String
 
 from app.db.base_class import Base
 
@@ -8,7 +8,9 @@ from .base import TimestampedModel
 
 
 class Contact(TimestampedModel, Base):
-    __tablename__ = "contacts"
+    """Model representing a contact."""
+
+    __tablename__ = 'contacts'
 
     id = Column(Integer, primary_key=True, index=True)
     phone = Column(String)

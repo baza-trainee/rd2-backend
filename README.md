@@ -1,3 +1,5 @@
+[![wemake-python-styleguide](https://img.shields.io/badge/style-wemake-000000.svg)](https://github.com/wemake-services/wemake-python-styleguide)
+
 # Socrat project
 Backend web application on FastAPI 
 
@@ -6,6 +8,14 @@ The application can be launched in 2 ways, using Docker or locally, but for this
 The application has 2 endpoints post and get(test) 
 It is also covered with tests and packaged in Docker containers
 Credentials have been added to the .env.example file so that you can deploy the application in 3 clicks.
+
+## Basic Requirements
+    - API for user management
+    - API for authorization and authentication
+    - API for menege reports
+    - API for manage contacts
+    - API for manage files
+    - Custom admin panel
 
 ---
 ## Installation
@@ -70,20 +80,20 @@ Credentials have been added to the .env.example file so that you can deploy the 
    ```
   Starting development server at  http://127.0.1:8000/
 
-**6 Testing** (coming soon)
+## Technologies
 
-If you run using Docker
-
-docker exec -it "CONTAINER ID" sh
-
-```shell
-
-
-```
-
-If you using virtual env. 
-
-```shell
+ - Python 3.11
+ - FastAPI
+ - Pydantic
+ - SQLAlchemy
+ - Docker 
+ - Docker-compose
+ - PostgreSQL
+ - Swagger
 
 
-```
+## License
+MIT License
+
+Created by Alex Grig
+email:alexgrig.cyber@gmail.com

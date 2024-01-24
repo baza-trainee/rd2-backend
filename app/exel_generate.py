@@ -1,5 +1,6 @@
+"""This module contains functions for generating exel reports."""
+
 import os
-from datetime import datetime, timedelta, timezone
 
 from openpyxl.workbook import Workbook
 
@@ -7,18 +8,19 @@ from app.crud.user import crud_user
 
 
 def generate_exel_report(db):
+    """Generate exel report."""
     wb = Workbook()
     ws = wb.active
 
     headers = [
-        "User ID",
-        "Name",
-        "Surname",
-        "Phone",
-        "Email",
-        "Role",
-        "Message",
-        "Message Create",
+        'User ID',
+        'Name',
+        'Surname',
+        'Phone',
+        'Email',
+        'Role',
+        'Message',
+        'Message Create',
     ]
     ws.append(headers)
 
@@ -38,11 +40,11 @@ def generate_exel_report(db):
             ]
             ws.append(row_data)
 
-    folder_path = "user_exel_report"
+    folder_path = 'user_exel_report'
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)
 
-    filename = "report.xlsx"
+    filename = 'report.xlsx'
     file_path = os.path.join(folder_path, filename)
     wb.save(file_path)
 

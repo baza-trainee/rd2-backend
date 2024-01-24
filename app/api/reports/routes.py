@@ -1,48 +1,41 @@
+"""Module for report routes."""
+
 import os
-
-
 
 from fastapi import APIRouter, Depends, HTTPException, UploadFile
 from sqlalchemy.orm import Session
 from starlette import status
-
-from starlette.responses import JSONResponse, FileResponse
+from starlette.responses import FileResponse, JSONResponse
 
 from app.api.deps import get_current_user, get_db
-from app.crud.report import crud_report, crud_privatepolicy, crud_rules
+from app.crud.report import crud_privatepolicy, crud_report, crud_rules
+from app.file_validate import file_valid
 from app.models import Admin
 from app.schemas import BaseFile, ReportResponse
-from app.file_validate import file_valid
-
 
 router = APIRouter()
 
 
 @router.post(
-
-    "/reports", response_model=ReportResponse, status_code=status.HTTP_201_CREATED
-
+    '/reports', response_model=ReportResponse, status_code=status.HTTP_201_CREATED
 )
 def upload_report(
     file: UploadFile,
     db: Session = Depends(get_db),
     current_user: Admin = Depends(get_current_user),
 ):
-
+    """Upload report."""
     valid_file = file_valid(file)
     if valid_file is False:
-        raise HTTPException(status_code=400, detail="File must be in PDF format")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='File must be in PDF format')
 
     elif valid_file is None:
-        raise HTTPException(status_code=400, detail="The file size should not exceed 200 MB")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='The file size should not exceed 200 MB')
 
-
-    upload_folder = "report"
+    upload_folder = 'report'
     os.makedirs(upload_folder, exist_ok=True)
 
     file_path = os.path.join(upload_folder, file.filename)
-
-    print(file_path)
     if crud_report.check_report(db):
         report = crud_report.check_report(db)
         report_id = report.id
@@ -51,42 +44,39 @@ def upload_report(
             os.remove(file_path)
         crud_report.remove(db, id=report_id)
 
-
-    with open(file_path, "wb") as f:
+    with open(file_path, 'wb') as f:
         f.write(file.file.read())
-
 
     report_schema = BaseFile(filename=file.filename, path=file_path)
     report = crud_report.create(db=db, obj_in=report_schema)
 
     return JSONResponse(
         content={
-            "message": f"{file.filename} successfully added. "
-
-            f"Report ID: {report.id} "
-            f"Report date: {report.created_at}"
+            'message': f'{file.filename} successfully added. '
+            f'Report ID: {report.id} '
+            f'Report date: {report.created_at}'
         },
-        media_type="application/json",
+        media_type='application/json',
     )
 
 
-
 @router.post(
-    "/private-policy", response_model=ReportResponse, status_code=status.HTTP_201_CREATED
+    '/private-policy', response_model=ReportResponse, status_code=status.HTTP_201_CREATED
 )
 def upload_private_policy(
     file: UploadFile,
     db: Session = Depends(get_db),
     current_user: Admin = Depends(get_current_user),
 ):
+    """Upload private policy."""
     valid_file = file_valid(file)
     if valid_file is False:
-        raise HTTPException(status_code=400, detail="File must be in PDF format")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="File must be in PDF format")
 
     elif valid_file is None:
-        raise HTTPException(status_code=400, detail="The file size should not exceed 200 MB")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="The file size should not exceed 200 MB")
 
-    upload_folder = "private_policy"
+    upload_folder = 'private_policy'
     os.makedirs(upload_folder, exist_ok=True)
 
     file_path = os.path.join(upload_folder, file.filename)
@@ -107,34 +97,35 @@ def upload_private_policy(
 
     return JSONResponse(
         content={
-            "message": f"{file.filename} successfully added. "
-            f"Private Policy ID: {privatepolicy.id} "
-            f"Private Policy date: {privatepolicy.created_at}"
+            'message': f'{file.filename} successfully added. '
+            f'Private Policy ID: {privatepolicy.id} '
+            f'Private Policy date: {privatepolicy.created_at}'
         },
-        media_type="application/json",
+        media_type='application/json',
     )
 
 
 @router.post(
-    "/terms-use", response_model=ReportResponse, status_code=status.HTTP_201_CREATED
+    '/terms-use', response_model=ReportResponse, status_code=status.HTTP_201_CREATED
 )
 def upload_terms_use(
     file: UploadFile,
     db: Session = Depends(get_db),
     current_user: Admin = Depends(get_current_user),
 ):
+    """Upload terms use."""
     valid_file = file_valid(file)
     if valid_file is False:
-        raise HTTPException(status_code=400, detail="File must be in PDF format")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='File must be in PDF format')
 
     elif valid_file is None:
-        raise HTTPException(status_code=400, detail="The file size should not exceed 200 MB")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='The file size should not exceed 200 MB')
 
-    upload_folder = "terms_use"
+    upload_folder = 'terms_use'
     os.makedirs(upload_folder, exist_ok=True)
 
     file_path = os.path.join(upload_folder, file.filename)
-    print(file_path)
+
     if crud_rules.check_rule(db):
         rule = crud_rules.check_rule(db)
         rule_id = rule.id
@@ -143,7 +134,7 @@ def upload_terms_use(
             os.remove(file_path)
         crud_rules.remove(db, id=rule_id)
 
-    with open(file_path, "wb") as f:
+    with open(file_path, 'wb') as f:
         f.write(file.file.read())
 
     rule_schema = BaseFile(filename=file.filename, path=file_path)
@@ -151,62 +142,62 @@ def upload_terms_use(
 
     return JSONResponse(
         content={
-            "message": f"{file.filename} successfully added. "
-            f"Terms Use ID: {rules.id} "
-            f"Terms Use date: {rules.created_at}"
+            'message': f'{file.filename} successfully added. '
+            f'Terms Use ID: {rules.id} '
+            f'Terms Use date: {rules.created_at}'
         },
-        media_type="application/json",
+        media_type='application/json',
     )
 
 
-@router.get("/reports/", response_class=FileResponse, status_code=status.HTTP_200_OK)
+@router.get('/reports/', response_class=FileResponse, status_code=status.HTTP_200_OK)
 def get_report(db: Session = Depends(get_db)):
+    """Get report."""
     report = crud_report.check_report(db)
     if report is None:
-        raise HTTPException(status_code=404, detail="Report not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Report not found")
     report_id = report.id
     reports = crud_report.get(db, id=report_id)
     return FileResponse(reports.path)
 
 
-@router.get("/private-policy/", response_class=FileResponse, status_code=status.HTTP_200_OK)
+@router.get('/private-policy/', response_class=FileResponse, status_code=status.HTTP_200_OK)
 def get_privatepolicy(db: Session = Depends(get_db)):
+    """Get private policy."""
     privatepolicy = crud_privatepolicy.check_privatepolicy(db)
     if privatepolicy is None:
-        raise HTTPException(status_code=404, detail="Private Policy not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Private Policy not found')
     privatepolicy_id = privatepolicy.id
     privatepolicies = crud_privatepolicy.get(db, id=privatepolicy_id)
     return FileResponse(privatepolicies.path)
 
 
-@router.get("/terms-use/", response_class=FileResponse, status_code=status.HTTP_200_OK)
+@router.get('/terms-use/', response_class=FileResponse, status_code=status.HTTP_200_OK)
 def get_rule(db: Session = Depends(get_db)):
+    """Get terms use."""
     rule = crud_rules.check_rule(db)
     if rule is None:
-        raise HTTPException(status_code=404, detail="Terms use not found")
+        raise HTTPException(status_code=404, detail='Terms use not found')
     rule_id = rule.id
     rules = crud_rules.get(db, id=rule_id)
     return FileResponse(rules.path)
 
 
-
-@router.delete("/remove", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete('/remove', status_code=status.HTTP_204_NO_CONTENT)
 def remove_report(
     db: Session = Depends(get_db), current_user: Admin = Depends(get_current_user)
 ):
-
     """
     Remove report
     """
-
     report = crud_report.check_report(db)
     if report is None:
-        raise HTTPException(status_code=404, detail="Report not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Report not found')
 
     report_id = report.id
     report = crud_report.get(db, report_id)
     if report is None:
-        raise HTTPException(status_code=404, detail="Report not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Report not found')
 
     file_path = report.path
     if os.path.exists(file_path):
@@ -216,8 +207,7 @@ def remove_report(
     return report
 
 
-
-@router.delete("/remove/private-policy", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete('/remove/private-policy', status_code=status.HTTP_204_NO_CONTENT)
 def remove_privatepolicy(
     db: Session = Depends(get_db), current_user: Admin = Depends(get_current_user)
 ):
@@ -226,13 +216,13 @@ def remove_privatepolicy(
     """
     privatepolicy = crud_privatepolicy.check_privatepolicy(db)
     if privatepolicy is None:
-        raise HTTPException(status_code=404, detail="Private Policy not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Private Policy not found')
 
     privatepolicy_id = privatepolicy.id
     privatepolicy = crud_privatepolicy.get(db, privatepolicy_id)
 
     if privatepolicy is None:
-        raise HTTPException(status_code=404, detail="Private Policy not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Private Policy not found')
 
     file_path = privatepolicy.path
     if os.path.exists(file_path):
@@ -242,7 +232,7 @@ def remove_privatepolicy(
     return privatepolicy
 
 
-@router.delete("/remove/terms-use", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete('/remove/terms-use', status_code=status.HTTP_204_NO_CONTENT)
 def remove_rule(
     db: Session = Depends(get_db), current_user: Admin = Depends(get_current_user)
 ):
@@ -251,12 +241,12 @@ def remove_rule(
     """
     rule = crud_rules.check_rule(db)
     if rule is None:
-        raise HTTPException(status_code=404, detail="Report not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Report not found')
 
     rule_id = rule.id
     rule = crud_rules.get(db, rule_id)
     if rule is None:
-        raise HTTPException(status_code=404, detail="Report not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Report not found')
 
     file_path = rule.path
     if os.path.exists(file_path):
