@@ -1,3 +1,4 @@
+
 """Dependencies for API endpoints."""
 
 from datetime import datetime
@@ -27,6 +28,7 @@ def get_current_user(
     token: str = Depends(apikey_scheme), db: Session = Depends(get_db),
 ):
     """Get current user."""
+
     try:
         token_data = token_decode(token)
         if token_data.exp and datetime.fromtimestamp(token_data.exp) < datetime.now():
@@ -56,6 +58,7 @@ def get_current_user(
 
 def check_active_user(user: Admin = Depends(get_current_user)):
     """Check active user."""
+
     if user.is_active:
         return user
 

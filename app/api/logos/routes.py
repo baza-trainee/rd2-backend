@@ -86,7 +86,6 @@ def remove_logo(
     logo = crud_logo.get(db, logo_id)
     if logo is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Logo not found')
-
     file_path = logo.path
     if os.path.exists(file_path):
         os.remove(file_path)
