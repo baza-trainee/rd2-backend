@@ -1,4 +1,6 @@
-from sqlalchemy import Column, Enum, ForeignKey, Integer, String, Table, Text
+"""Models for user and message."""
+
+from sqlalchemy import Column, Enum, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import relationship
 
 from app.db.base_class import Base
@@ -8,7 +10,9 @@ from .base import TimestampedModel
 
 
 class User(TimestampedModel, Base):
-    __tablename__ = "users"
+    """Model representing a user."""
+
+    __tablename__ = 'users'
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
@@ -17,14 +21,16 @@ class User(TimestampedModel, Base):
     email = Column(String, unique=True, index=True, nullable=False)
     role = Column(Enum(UserTypeEnum), nullable=False, default=UserTypeEnum.client)
 
-    messages = relationship("Message", back_populates="users")
+    messages = relationship('Message', back_populates='users')
 
 
 class Message(TimestampedModel, Base):
-    __tablename__ = "messages"
+    """Model representing a message."""
+
+    __tablename__ = 'messages'
 
     id = Column(Integer, primary_key=True, index=True)
     msg = Column(Text)
 
-    user_id = Column(Integer, ForeignKey("users.id"))
-    users = relationship("User", back_populates="messages")
+    user_id = Column(Integer, ForeignKey('users.id'))
+    users = relationship('User', back_populates='messages')

@@ -1,4 +1,7 @@
+"""Models for admin users."""
+
 import enum
+
 from sqlalchemy import Boolean, Column, Enum, Integer, String
 
 from app.db.base_class import Base
@@ -7,12 +10,16 @@ from .base import TimestampedModel
 
 
 class UserTypeEnum(enum.Enum):
-    client = "user"
-    superadmin = "superuser"
+    """Enum representing user types."""
+
+    client = 'user'
+    superadmin = 'superuser'
 
 
 class Admin(TimestampedModel, Base):
-    __tablename__ = "admins"
+    """Model representing an admin user."""
+
+    __tablename__ = 'admins'
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=True)

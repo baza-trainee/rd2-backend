@@ -1,8 +1,9 @@
-from datetime import datetime
+"""File validation module."""
 
 
 def file_valid(upload_file):
-    if not upload_file.filename.endswith(".pdf"):
+    """Check file is valid."""
+    if not upload_file.filename.endswith('.pdf'):
         return False
 
     max_length = 2 * 1024 ** 2

@@ -1,5 +1,6 @@
-from sqlalchemy import Column, Integer, LargeBinary, String
-from sqlalchemy.dialects.postgresql import BYTEA
+"""Schemas for reports related models."""
+
+from sqlalchemy import Column, Integer, String
 
 from app.db.base_class import Base
 
@@ -7,7 +8,9 @@ from .base import TimestampedModel
 
 
 class Report(TimestampedModel, Base):
-    __tablename__ = "reports"
+    """Model representing a report."""
+
+    __tablename__ = 'reports'
 
     id = Column(Integer, primary_key=True, index=True)
     filename = Column(String, unique=True, nullable=False)
@@ -15,7 +18,9 @@ class Report(TimestampedModel, Base):
 
 
 class PrivatePolicy(TimestampedModel, Base):
-    __tablename__ = "privatepolicy"
+    """Model representing a private policy."""
+
+    __tablename__ = 'privatepolicy'
 
     id = Column(Integer, primary_key=True, index=True)
     filename = Column(String, unique=True, nullable=False)
@@ -23,7 +28,9 @@ class PrivatePolicy(TimestampedModel, Base):
 
 
 class Rules(TimestampedModel, Base):
-    __tablename__ = "rules"
+    """Model representing a rules."""
+
+    __tablename__ = 'rules'
 
     id = Column(Integer, primary_key=True, index=True)
     filename = Column(String, unique=True, nullable=False)

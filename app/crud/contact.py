@@ -1,3 +1,5 @@
+"""Module for CRUD operations on Contact model."""
+
 from typing import Optional
 
 from sqlalchemy.orm import Session
@@ -9,12 +11,11 @@ from .base import CRUDBase
 
 
 class ContactCRUD(CRUDBase[Contact, schemas.ContactBase, schemas.UpdateContact]):
-    def check_contact(self, db: Session) -> Optional[Contact]:
-        print(db.query(Contact).first())
-        return db.query(Contact).first()
+    """Class for CRUD operations on Contact model."""
 
-    # def check_email(self, db: Session) -> Optional[Contact]:
-    #     return db.query(Contact).first().email
+    def check_contact(self, db: Session) -> Optional[Contact]:
+        """Check if contact exists."""
+        return db.query(Contact).first()
 
 
 crud_contact = ContactCRUD(Contact)
